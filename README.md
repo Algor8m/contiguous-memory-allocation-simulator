@@ -1,100 +1,67 @@
 # Contiguous Memory Allocation Simulator
 
-A Python-based Operating Systems project that simulates contiguous memory allocation using First Fit, Best Fit, and Worst Fit algorithms.
+A Python-based interactive simulator for demonstrating **contiguous memory allocation** using the **First Fit, Best Fit, and Worst Fit** algorithms.
+
+The project provides a Streamlit web interface where users can enter memory blocks and process sizes, run an allocation strategy, visualize memory usage, and compare the three algorithms.
+
+---
 
 ## Features
 
-- First Fit allocation
-- Best Fit allocation
-- Worst Fit allocation
-- Compare all three algorithms
+- First Fit memory allocation
+- Best Fit memory allocation
+- Worst Fit memory allocation
+- Custom memory block sizes
+- Custom process sizes
 - Process allocation table
-- Memory block visualization
+- Allocated and unallocated process counts
 - Remaining memory calculation
 - Memory utilization calculation
-- Allocation statistics
-- Comparison charts
+- Visual representation of memory blocks
+- Comparison of all three algorithms
 - Input validation and error handling
-- Interactive Streamlit GUI
 
-## Technologies
+---
 
-- Python
-- Streamlit
-- HTML
-- CSS
+## Technologies Used
+
+- **Python 3**
+- **Streamlit**
+- **Git / GitHub**
+
+---
 
 ## Project Structure
 
 ```text
-OsProject/
+OsProjectMiniFinal/
 │
 ├── app.py
 ├── algorithms.py
 ├── requirements.txt
+├── README.md
 ├── PROJECT.md
-└── README.md
+├── Contiguous_Memory_Allocation_Simulator_Final_Report.docx
+├── Contiguous_Memory_Allocation_Simulator_Presentation.pptx
+├── Contiguous_Memory_Allocation_Simulator_Report.md
+└── contiguous_memory_allocation_flowchart.png
 ```
 
-### `app.py`
+---
 
-Contains the Streamlit graphical interface, input validation, result display, memory visualization, statistics, and algorithm comparison.
+## How It Works
 
-### `algorithms.py`
+The simulator takes:
 
-Contains the implementations of:
-
-- `first_fit()`
-- `best_fit()`
-- `worst_fit()`
-
-### `requirements.txt`
-
-Contains the required Python dependency:
+### Inputs
 
 ```text
-streamlit
+Memory block sizes
+Process sizes
+Allocation algorithm
 ```
-
-## Input
-
-### Memory Block Sizes
-
-Enter memory block sizes separated by commas.
 
 Example:
-
-```text
-100, 500, 200, 300, 600
-```
-
-### Process Sizes
-
-Enter process sizes separated by commas.
-
-Example:
-
-```text
-212, 417, 112, 426
-```
-
-## Algorithms
-
-### First Fit
-
-Allocates each process to the first available memory block that is large enough.
-
-### Best Fit
-
-Allocates each process to the smallest available memory block that can accommodate it.
-
-### Worst Fit
-
-Allocates each process to the largest available memory block that can accommodate it.
-
-## Example
-
-Input:
 
 ```text
 Memory Blocks:
@@ -104,102 +71,168 @@ Processes:
 212, 417, 112, 426
 ```
 
-Example allocation results:
+### Outputs
 
 ```text
-First Fit:
-P1 → B2
-P2 → B5
-P3 → B2
-P4 → Unallocated
-
-Best Fit:
-P1 → B4
-P2 → B2
-P3 → B3
-P4 → B5
-
-Worst Fit:
-P1 → B5
-P2 → B2
-P3 → B5
-P4 → Unallocated
+Process allocation
+Unallocated processes
+Remaining memory
+Used memory
+Memory utilization
+Algorithm comparison
+Memory visualization
 ```
+
+---
+
+## Allocation Algorithms
+
+### First Fit
+
+First Fit searches memory blocks from the beginning and assigns a process to the first block that is large enough.
+
+```text
+For each process:
+    Search blocks from the beginning
+    Allocate to the first suitable block
+```
+
+### Best Fit
+
+Best Fit searches all suitable blocks and assigns the process to the smallest block that can accommodate it.
+
+```text
+For each process:
+    Find the smallest suitable block
+    Allocate the process
+```
+
+### Worst Fit
+
+Worst Fit searches all suitable blocks and assigns the process to the largest available block.
+
+```text
+For each process:
+    Find the largest suitable block
+    Allocate the process
+```
+
+---
+
+## System Flowchart
+
+![System Flowchart](contiguous_memory_allocation_flowchart.png)
+
+---
 
 ## Installation
 
-Make sure Python is installed:
+Clone the repository:
 
 ```bash
-python --version
+git clone https://github.com/Algor8m/contiguous-memory-allocation-simulator.git
 ```
 
-Install the project dependencies:
+Move into the project directory:
+
+```bash
+cd contiguous-memory-allocation-simulator
+```
+
+Create and activate a virtual environment if desired:
+
+### Windows
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
+---
+
 ## Running the Application
 
-Run:
+Start Streamlit with:
 
 ```bash
 python -m streamlit run app.py
 ```
 
-The application will open in the browser at:
+The application will open in your web browser.
+
+---
+
+## Example Test Case
+
+### Memory Blocks
 
 ```text
-http://localhost:8501
+100, 500, 200, 300, 600
 ```
+
+### Processes
+
+```text
+212, 417, 112, 426
+```
+
+### Results
+
+| Algorithm | Allocated | Unallocated |
+|---|---:|---:|
+| First Fit | 3 | 1 |
+| Best Fit | 4 | 0 |
+| Worst Fit | 3 | 1 |
+
+The application also displays the remaining memory for every block and calculates memory utilization.
+
+---
 
 ## Input Validation
 
-The application rejects:
+The application handles:
 
 - Empty input
 - Non-numeric values
-- Extra commas
 - Zero values
 - Negative values
+- Extra commas
 
-Processes that cannot fit into any available memory block are displayed as **Unallocated**.
-
-## Workflow
+Example invalid input:
 
 ```text
-Start
-  ↓
-Enter Memory Blocks
-  ↓
-Enter Process Sizes
-  ↓
-Validate Input
-  ↓
-Select Algorithm
-  ↓
-Run Simulation
-  ↓
-Allocate Processes
-  ↓
-Calculate Remaining Memory
-  ↓
-Display Results
-  ↓
-Display Visualization
-  ↓
-Compare Algorithms
-  ↓
-End
+100, 500,, 300
 ```
 
-## Project Documentation
+The application displays an error instead of terminating.
 
-For detailed project documentation, algorithms, examples, workflow, and implementation details, see:
+---
 
-`PROJECT.md`
+## Documentation
+
+The repository includes:
+
+- `PROJECT.md` — detailed project documentation
+- `Contiguous_Memory_Allocation_Simulator_Final_Report.docx` — project report
+- `Contiguous_Memory_Allocation_Simulator_Presentation.pptx` — presentation
+- `contiguous_memory_allocation_flowchart.png` — system flowchart
+
+---
+
+## Project Objective
+
+The objective of this project is to demonstrate how different contiguous memory allocation strategies behave when assigning processes to available memory blocks.
+
+The simulator provides an interactive way to understand process allocation, remaining memory, memory utilization, and the differences between First Fit, Best Fit, and Worst Fit.
+
+---
 
 ## License
 
-This project is developed as an academic Operating Systems project.
+This project was developed as an academic Operating Systems mini project.

@@ -1,7 +1,8 @@
+import os
 import streamlit as st
+import pandas as pd
 
 from algorithms import first_fit, best_fit, worst_fit
-
 
 # ============================================================
 # PAGE CONFIGURATION
@@ -11,1004 +12,607 @@ st.set_page_config(
     page_title="Contiguous Memory Allocation Simulator",
     page_icon="💾",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
-
 
 # ============================================================
 # COLOR PALETTE
 # ============================================================
 
-RED = "#A91D22"
-BLACK = "#000000"
-GREY = "#7F7F7F"
-DARK_GREY = "#333333"
-LIGHT_GREY = "#F4F4F4"
-WHITE = "#FFFFFF"
-BORDER = "#D9D9D9"
-
+PRIMARY_RED = "#9E1B32"
+HOVER_RED = "#7E1426"
+DARK_TEXT = "#1A1A1A"
+MUTED_TEXT = "#555555"
+LIGHT_BG = "#F8F9FA"
+CARD_BG = "#FFFFFF"
+BORDER_COLOR = "#DDE2E5"
 
 # ============================================================
 # CUSTOM CSS
 # ============================================================
 
 st.markdown(
-    f"""
-<style>
-
-    /* ========================================================
-       GLOBAL
-       ======================================================== */
-
-    .stApp {{
-        background-color: {WHITE};
-    }}
-
-    .block-container {{
-        padding-top: 2rem;
-        padding-bottom: 3rem;
-        max-width: 1400px;
-    }}
-
-    /* Force normal text to remain visible */
-    .stApp p,
-    .stApp span,
-    .stApp label {{
-        color: {BLACK};
-    }}
-
-    h1, h2, h3, h4, h5, h6 {{
-        color: {BLACK} !important;
-    }}
-
-
-    /* ========================================================
-       HEADER
-       ======================================================== */
-
-    .project-header {{
-        background-color: {BLACK};
-        padding: 18px 30px;
-        border-radius: 10px;
-        margin-bottom: 25px;
-    }}
-
-    .project-header-title {{
-        color: {WHITE} !important;
-        font-size: 28px;
-        font-weight: 700;
-        margin: 0;
-    }}
-
-    .project-header-subtitle {{
-        color: #D0D0D0 !important;
-        font-size: 14px;
-        margin-top: 4px;
-    }}
-
-
-    /* ========================================================
-       MAIN TITLE
-       ======================================================== */
-
-    .main-title {{
-        text-align: center;
-        color: {BLACK} !important;
-        font-size: 38px;
-        font-weight: 800;
-        margin-top: 10px;
-        margin-bottom: 5px;
-    }}
-
-    .title-line {{
-        width: 90px;
-        height: 4px;
-        background-color: {RED};
-        margin: 10px auto 12px auto;
-        border-radius: 5px;
-    }}
-
-    .subtitle {{
-        text-align: center;
-        color: {GREY} !important;
-        font-size: 16px;
-        margin-bottom: 35px;
-    }}
-
-
-    /* ========================================================
-       SECTION TITLES
-       ======================================================== */
-
-    .section-title {{
-        color: {BLACK} !important;
-        font-size: 23px;
-        font-weight: 700;
-        border-left: 5px solid {RED};
-        padding-left: 12px;
-        margin-top: 25px;
-        margin-bottom: 15px;
-    }}
-
-
-    /* ========================================================
-       INFORMATION CARD
-       ======================================================== */
-
-    .info-card {{
-        background-color: {LIGHT_GREY};
-        border: 1px solid {BORDER};
-        border-left: 5px solid {RED};
-        border-radius: 8px;
-        padding: 18px;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }}
-
-    .info-card-title {{
-        color: {BLACK} !important;
-        font-weight: 700;
-        font-size: 17px;
-        margin-bottom: 8px;
-    }}
-
-    .info-card-text {{
-        color: {DARK_GREY} !important;
-        font-size: 14px;
-        line-height: 1.6;
-    }}
-
-
-    /* ========================================================
-       TEXT INPUT
-       ======================================================== */
-
-    div[data-testid="stTextInput"] label {{
-        color: {BLACK} !important;
-        font-weight: 600;
-    }}
-
-    div[data-testid="stTextInput"] input {{
-        color: {BLACK} !important;
-        background-color: {WHITE} !important;
-        border: 1px solid {BORDER};
-        border-radius: 7px;
-    }}
-
-    div[data-testid="stTextInput"] input::placeholder {{
-        color: {GREY} !important;
-    }}
-
-    div[data-testid="stTextInput"] input:focus {{
-        border-color: {RED};
-        box-shadow: 0 0 0 1px {RED};
-    }}
-
-
-    /* ========================================================
-       SELECT BOX
-       ======================================================== */
-
-    div[data-testid="stSelectbox"] label {{
-        color: {BLACK} !important;
-        font-weight: 600;
-    }}
-
-    div[data-testid="stSelectbox"] div {{
-        color: {BLACK};
-    }}
-
-
-    /* ========================================================
-       BUTTON
-       ======================================================== */
-
-    div.stButton > button {{
-        background-color: {RED};
-        color: {WHITE} !important;
-        border: none;
-        border-radius: 7px;
-        font-weight: 700;
-        padding: 10px 24px;
-        transition: 0.2s;
-    }}
-
-    div.stButton > button p {{
-        color: {WHITE} !important;
-    }}
-
-    div.stButton > button:hover {{
-        background-color: #8F181D;
-        color: {WHITE} !important;
-    }}
-
-    div.stButton > button:hover p {{
-        color: {WHITE} !important;
-    }}
-
-
-    /* ========================================================
-       MEMORY BLOCK
-       ======================================================== */
-
-    .memory-block {{
-        background-color: {LIGHT_GREY};
-        border: 2px solid {BORDER};
-        border-top: 5px solid {RED};
-        border-radius: 10px;
-        padding: 16px;
-        text-align: center;
-        min-height: 280px;
-        margin-bottom: 10px;
-        color: {BLACK} !important;
-    }}
-
-    .memory-block h3 {{
-        color: {RED} !important;
-        margin-top: 0;
-        margin-bottom: 8px;
-    }}
-
-    .memory-block b {{
-        color: {BLACK} !important;
-    }}
-
-    .memory-block hr {{
-        border: none;
-        border-top: 1px solid {BORDER};
-    }}
-
-
-    /* ========================================================
-       METRICS
-       ======================================================== */
-
-    div[data-testid="stMetric"] {{
-        background-color: {LIGHT_GREY};
-        border-left: 4px solid {RED};
-        padding: 15px;
-        border-radius: 7px;
-    }}
-
-    div[data-testid="stMetric"] label {{
-        color: {GREY} !important;
-    }}
-
-    div[data-testid="stMetric"] [data-testid="stMetricValue"] {{
-        color: {BLACK} !important;
-    }}
-
-    div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{
-        color: {GREY} !important;
-    }}
-
-
-    /* ========================================================
-       TABLE
-       ======================================================== */
-
-    table {{
-        color: {BLACK} !important;
-    }}
-
-    thead tr th {{
-        background-color: {BLACK} !important;
-        color: {WHITE} !important;
-    }}
-
-    tbody tr td {{
-        color: {BLACK} !important;
-        background-color: {WHITE} !important;
-    }}
-
-    tbody tr:nth-child(even) td {{
-        background-color: {LIGHT_GREY} !important;
-    }}
-
-
-    /* ========================================================
-       FOOTER
-       ======================================================== */
-
-    .footer {{
-        text-align: center;
-        color: {GREY} !important;
-        font-size: 13px;
-        padding-top: 30px;
-        margin-top: 40px;
-        border-top: 1px solid {BORDER};
-    }}
-
-</style>
-""",
-    unsafe_allow_html=True
+    f"""<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+.stApp {{
+    background-color: #F4F6F8;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}}
+.block-container {{
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+    max-width: 1350px;
+}}
+.stApp p, .stApp span, .stApp label {{
+    color: {DARK_TEXT};
+}}
+.header-card {{
+    background-color: {CARD_BG};
+    border: 1px solid {BORDER_COLOR};
+    border-top: 4px solid {PRIMARY_RED};
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}}
+.header-tag {{
+    color: {PRIMARY_RED} !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+}}
+.header-title {{
+    color: {DARK_TEXT} !important;
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+}}
+.header-desc {{
+    color: {MUTED_TEXT} !important;
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.5;
+}}
+.team-badge-container {{
+    background-color: #FFFFFF;
+    border: 1px solid {BORDER_COLOR};
+    border-radius: 6px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}}
+.team-title {{
+    font-weight: 700;
+    font-size: 13px;
+    color: {PRIMARY_RED} !important;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}}
+.student-tag {{
+    background-color: #F8F9FA;
+    border: 1px solid {BORDER_COLOR};
+    border-left: 3px solid {PRIMARY_RED};
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: {DARK_TEXT};
+}}
+.content-panel {{
+    background-color: {CARD_BG};
+    border: 1px solid {BORDER_COLOR};
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}}
+.section-title {{
+    font-size: 18px;
+    font-weight: 700;
+    color: {DARK_TEXT} !important;
+    border-left: 4px solid {PRIMARY_RED};
+    padding-left: 10px;
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
+}}
+div[data-testid="stTextInput"] label {{
+    color: {DARK_TEXT} !important;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}}
+div[data-testid="stTextInput"] input {{
+    color: {DARK_TEXT} !important;
+    background-color: #FFFFFF !important;
+    border: 1px solid #CCD2D8 !important;
+    border-radius: 4px;
+    padding: 8px 12px;
+}}
+div[data-testid="stTextInput"] input:focus {{
+    border-color: {PRIMARY_RED} !important;
+    box-shadow: 0 0 0 1px {PRIMARY_RED} !important;
+}}
+div.stButton > button {{
+    background-color: {PRIMARY_RED} !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    padding: 10px 18px !important;
+    transition: 0.2s ease-in-out;
+    width: 100%;
+}}
+div.stButton > button p {{
+    color: #FFFFFF !important;
+}}
+div.stButton > button:hover {{
+    background-color: {HOVER_RED} !important;
+}}
+div[data-testid="stMetric"] {{
+    background-color: #FFFFFF;
+    border: 1px solid {BORDER_COLOR};
+    border-top: 3px solid {PRIMARY_RED};
+    padding: 14px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}}
+.styled-table {{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 24px 0;
+    font-size: 14px;
+    background-color: #FFFFFF;
+    border: 1px solid {BORDER_COLOR};
+    border-radius: 6px;
+    overflow: hidden;
+}}
+.styled-table thead tr {{
+    background-color: {PRIMARY_RED};
+    color: #FFFFFF;
+    text-align: left;
+}}
+.styled-table th {{
+    padding: 12px 16px;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}}
+.styled-table td {{
+    padding: 12px 16px;
+    border-bottom: 1px solid {BORDER_COLOR};
+    color: {DARK_TEXT};
+}}
+.styled-table tbody tr:nth-of-type(even) {{
+    background-color: #F8F9FA;
+}}
+.styled-table tbody tr:last-of-type td {{
+    border-bottom: none;
+}}
+.memory-block-card {{
+    background-color: #FFFFFF;
+    border: 1px solid {BORDER_COLOR};
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}}
+.memory-block-header {{
+    padding: 8px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid {BORDER_COLOR};
+}}
+.block-occupied {{
+    background-color: #FDF2F2;
+    color: {PRIMARY_RED};
+    border-left: 4px solid {PRIMARY_RED};
+}}
+.block-free {{
+    background-color: #F8F9FA;
+    color: {MUTED_TEXT};
+    border-left: 4px solid #A0AEC0;
+}}
+.memory-block-body {{
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: {DARK_TEXT};
+}}
+.analytics-box {{
+    background-color: #FFFFFF;
+    border: 1px solid {BORDER_COLOR};
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}}
+.analytics-header {{
+    font-size: 15px;
+    font-weight: 700;
+    color: {DARK_TEXT};
+    margin-bottom: 14px;
+}}
+</style>""",
+    unsafe_allow_html=True,
 )
 
+# ============================================================
+# LOGO & HEADER BANNER
+# ============================================================
+
+logo_col, title_col = st.columns([1, 4])
+
+with logo_col:
+    if os.path.exists("nmims_logo.png"):
+        st.image("nmims_logo.png", use_container_width=True)
+    else:
+        st.markdown(
+            f'<div style="border: 2px dashed {BORDER_COLOR}; border-radius: 6px; padding: 25px; text-align: center; color: {MUTED_TEXT}; font-weight: bold; font-size: 12px;">nmims_logo.png</div>',
+            unsafe_allow_html=True,
+        )
+
+with title_col:
+    st.markdown(
+        f'<div class="header-card" style="margin-bottom: 0;"><div class="header-tag">Operating Systems | Unit 5 – Memory Management</div><h1 class="header-title">Contiguous Memory Allocation Simulator</h1><div class="header-desc">Partition-based memory allocation strategies: <b>First Fit</b>, <b>Best Fit</b>, and <b>Worst Fit</b>. Calculates partition assignment, internal fragmentation, external fragmentation, and allocation efficiency.</div></div>',
+        unsafe_allow_html=True,
+    )
+
+st.write("")
 
 # ============================================================
-# HEADER
+# DEVELOPER CREDITS
 # ============================================================
 
 st.markdown(
-    """
-    <div class="project-header">
-        <div class="project-header-title">
-            Operating Systems Mini Project
-        </div>
-        <div class="project-header-subtitle">
-            Memory Management Simulation
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
+    '<div class="team-badge-container"><span class="team-title">Developed By:</span><div class="student-tag">Ritam Mahakur &nbsp;<b>(C001)</b></div><div class="student-tag">Nandini Devnani &nbsp;<b>(C005)</b></div><div class="student-tag">Sahasra &nbsp;<b>(C046)</b></div></div>',
+    unsafe_allow_html=True,
 )
 
-
 # ============================================================
-# MAIN TITLE
-# ============================================================
-
-st.markdown(
-    '<div class="main-title">'
-    'Contiguous Memory Allocation Simulator'
-    '</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="title-line"></div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="subtitle">'
-    'Simulation and comparison of First Fit, Best Fit, and Worst Fit allocation strategies'
-    '</div>',
-    unsafe_allow_html=True
-)
-
-
-# ============================================================
-# PROJECT INFORMATION
+# CONFIGURATION INPUT PANEL
 # ============================================================
 
-st.markdown(
-    '<div class="info-card">'
-    '<div class="info-card-title">About the Simulator</div>'
-    '<div class="info-card-text">'
-    'This simulator demonstrates contiguous memory allocation '
-    'using three classical allocation strategies: First Fit, '
-    'Best Fit, and Worst Fit. Enter memory block sizes and '
-    'process sizes to observe process allocation, remaining '
-    'memory, memory utilization, and algorithm comparison.'
-    '</div>'
-    '</div>',
-    unsafe_allow_html=True
-)
-
-
-# ============================================================
-# MEMORY CONFIGURATION
-# ============================================================
-
-st.markdown(
-    '<div class="section-title">Memory Configuration</div>',
-    unsafe_allow_html=True
-)
+st.markdown('<div class="content-panel">', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Configuration Parameters</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
-
     block_input = st.text_input(
-        "Memory Block Sizes (KB)",
+        "Memory Partition Sizes (KB)",
         value="100, 500, 200, 300, 600",
-        help="Enter memory block sizes separated by commas."
+        help="Enter block capacities separated by commas.",
     )
 
 with col2:
-
     process_input = st.text_input(
-        "Process Sizes (KB)",
+        "Incoming Process Sizes (KB)",
         value="212, 417, 112, 426",
-        help="Enter process sizes separated by commas."
+        help="Enter incoming job sizes separated by commas.",
     )
 
+st.markdown('<div class="section-title" style="margin-top: 15px;">Run Allocation Strategy</div>', unsafe_allow_html=True)
 
-# ============================================================
-# ALGORITHM SELECTION
-# ============================================================
+btn_col1, btn_col2, btn_col3, btn_col4 = st.columns(4)
 
-st.markdown(
-    '<div class="section-title">Allocation Strategy</div>',
-    unsafe_allow_html=True
-)
+with btn_col1:
+    btn_first = st.button("First Fit", use_container_width=True)
 
-algorithm = st.selectbox(
-    "Select Allocation Algorithm",
-    [
-        "First Fit",
-        "Best Fit",
-        "Worst Fit",
-        "Compare All Algorithms"
-    ]
-)
+with btn_col2:
+    btn_best = st.button("Best Fit", use_container_width=True)
+
+with btn_col3:
+    btn_worst = st.button("Worst Fit", use_container_width=True)
+
+with btn_col4:
+    btn_compare = st.button("Compare All", use_container_width=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ============================================================
-# INPUT PARSER AND VALIDATION
+# INPUT PARSER
 # ============================================================
 
 def parse_input(value):
-
     value = value.strip()
-
-    # Empty input
     if not value:
+        raise ValueError("Input cannot be empty.")
 
-        raise ValueError(
-            "Input cannot be empty."
-        )
-
-    # Split by comma
     parts = value.split(",")
-
-    # Detect extra commas
     for part in parts:
-
         if part.strip() == "":
+            raise ValueError("Invalid format: extra or trailing comma detected.")
 
-            raise ValueError(
-                "Invalid input: extra comma detected."
-            )
-
-    # Convert values to integers
     try:
-
-        numbers = [
-            int(part.strip())
-            for part in parts
-        ]
-
+        numbers = [int(part.strip()) for part in parts]
     except ValueError:
+        raise ValueError("Invalid input: values must be positive integers.")
 
-        raise ValueError(
-            "Invalid input: only numbers are allowed."
-        )
-
-    # Reject zero and negative values
     for number in numbers:
-
         if number <= 0:
-
-            raise ValueError(
-                "Invalid input: all values must be greater than 0."
-            )
+            raise ValueError("Invalid size: all partition and process sizes must exceed 0 KB.")
 
     return numbers
 
 
+def run_algorithm(func, blocks, processes):
+    res = func(blocks, processes)
+    if len(res) == 4:
+        return res[0], res[1], res[2], res[3]
+    elif len(res) == 3:
+        return res[0], res[1], res[2], []
+    else:
+        return res[0], [False] * len(blocks), [0] * len(blocks), []
+
+
 # ============================================================
-# MEMORY VISUALIZATION
+# MEMORY VISUALIZER
 # ============================================================
 
-def display_memory(
-    blocks,
-    processes,
-    allocation,
-    remaining
-):
+def display_memory(blocks, processes, allocation, occupied, internal_frag):
+    st.markdown('<div class="section-title">Partition Memory Map</div>', unsafe_allow_html=True)
 
-    st.subheader("Memory Visualization")
+    cols_per_row = 4
+    total_blocks = len(blocks)
 
-    columns = st.columns(len(blocks))
+    for row_start in range(0, total_blocks, cols_per_row):
+        row_end = min(row_start + cols_per_row, total_blocks)
+        cols = st.columns(cols_per_row)
 
-    for i in range(len(blocks)):
+        for col_idx, block_idx in enumerate(range(row_start, row_end)):
+            allocated_proc = "None"
+            process_size = 0
 
-        allocated_processes = []
+            for p_idx, b_idx in enumerate(allocation):
+                if b_idx == block_idx:
+                    allocated_proc = f"P{p_idx + 1}"
+                    process_size = processes[p_idx]
+                    break
 
-        for process_index, block_index in enumerate(allocation):
+            if occupied[block_idx]:
+                header_class = "block-occupied"
+                status_label = "OCCUPIED"
+                frag_val = f"{internal_frag[block_idx]} KB"
+            else:
+                header_class = "block-free"
+                status_label = "FREE"
+                frag_val = "0 KB"
 
-            if block_index == i:
-
-                allocated_processes.append(
-                    f"P{process_index + 1} "
-                    f"({processes[process_index]} KB)"
-                )
-
-        used = blocks[i] - remaining[i]
-
-        process_text = "<br>".join(
-            allocated_processes
-        )
-
-        if not process_text:
-
-            process_text = "No process allocated"
-
-        html = f"""
-<div class="memory-block">
-<h3>B{i + 1}</h3>
-<hr>
-<b>Total:</b> {blocks[i]} KB
-<br><br>
-<b>Allocated:</b>
-<br>
-{process_text}
-<br><br>
-<b>Used:</b> {used} KB
-<br>
-<b>Remaining:</b> {remaining[i]} KB
-</div>
-"""
-
-        with columns[i]:
-
-            st.markdown(
-                html,
-                unsafe_allow_html=True
+            card_html = (
+                f'<div class="memory-block-card">'
+                f'<div class="memory-block-header {header_class}">'
+                f'<span>Partition {block_idx + 1}</span>'
+                f'<span>{status_label}</span>'
+                f'</div>'
+                f'<div class="memory-block-body">'
+                f'<b>Total Capacity:</b> {blocks[block_idx]} KB<br>'
+                f'<b>Active Process:</b> {allocated_proc} ({process_size} KB)<br>'
+                f'<b>Internal Frag.:</b> {frag_val}<br>'
+                f'<b>Unused Space:</b> {blocks[block_idx] - process_size} KB'
+                f'</div>'
+                f'</div>'
             )
+            with cols[col_idx]:
+                st.markdown(card_html, unsafe_allow_html=True)
 
 
 # ============================================================
-# RESULT DISPLAY
+# RESULTS RENDERER
 # ============================================================
 
-def display_results(
-    name,
-    blocks,
-    processes,
-    allocation,
-    remaining
-):
+def display_results(name, blocks, processes, allocation, occupied, internal_frag, logs):
+    st.markdown(f'<div class="section-title">{name} — Allocation Report</div>', unsafe_allow_html=True)
 
-    st.header(name)
-
-    # --------------------------------------------------------
-    # PROCESS ALLOCATION TABLE
-    # --------------------------------------------------------
-
-    st.subheader("Process Allocation")
-
-    table_data = []
-
+    table_rows = []
     for i in range(len(processes)):
-
         if allocation[i] != -1:
-
-            block_name = f"B{allocation[i] + 1}"
-            status = "Allocated"
-
+            blk_idx = allocation[i]
+            block_name = f"Partition {blk_idx + 1}"
+            status = "<span style='color: #2E7D32; font-weight:600;'>Allocated</span>"
+            frag = f"{internal_frag[blk_idx]} KB"
         else:
-
             block_name = "-"
-            status = "Unallocated"
+            status = "<span style='color: #C62828; font-weight:600;'>Unallocated</span>"
+            frag = "-"
 
-        table_data.append(
+        table_rows.append(
             {
-                "Process": f"P{i + 1}",
-                "Size (KB)": processes[i],
-                "Allocated Block": block_name,
-                "Status": status
+                "Process": f"<b>P{i + 1}</b>",
+                "Required Memory": f"{processes[i]} KB",
+                "Allocated Partition": block_name,
+                "Status": status,
+                "Internal Frag.": frag,
             }
         )
 
-    st.table(table_data)
+    df_report = pd.DataFrame(table_rows)
+    table_html = df_report.to_html(classes="styled-table", index=False, escape=False)
+    st.markdown(table_html, unsafe_allow_html=True)
 
-    # --------------------------------------------------------
-    # STATISTICS
-    # --------------------------------------------------------
-
-    allocated_count = sum(
-        1
-        for x in allocation
-        if x != -1
-    )
-
-    unallocated_count = (
-        len(processes)
-        - allocated_count
-    )
-
+    allocated_count = sum(1 for x in allocation if x != -1)
+    unallocated_count = len(processes) - allocated_count
     total_memory = sum(blocks)
+    total_allocated_proc_mem = sum(
+        processes[i] for i, b in enumerate(allocation) if b != -1
+    )
+    total_internal_frag = sum(internal_frag)
 
-    remaining_memory = sum(remaining)
-
-    used_memory = (
-        total_memory
-        - remaining_memory
+    external_frag = (
+        sum(blocks[i] for i in range(len(blocks)) if not occupied[i])
+        if unallocated_count > 0
+        else 0
     )
 
     utilization = (
-        used_memory
-        / total_memory
-    ) * 100
-
-    # --------------------------------------------------------
-    # METRICS
-    # --------------------------------------------------------
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-
-        st.metric(
-            "Allocated Processes",
-            allocated_count
-        )
-
-    with col2:
-
-        st.metric(
-            "Unallocated Processes",
-            unallocated_count
-        )
-
-    with col3:
-
-        st.metric(
-            "Used Memory",
-            f"{used_memory} KB"
-        )
-
-    with col4:
-
-        st.metric(
-            "Memory Utilization",
-            f"{utilization:.2f}%"
-        )
-
-    # --------------------------------------------------------
-    # MEMORY VISUALIZATION
-    # --------------------------------------------------------
-
-    display_memory(
-        blocks,
-        processes,
-        allocation,
-        remaining
+        (total_allocated_proc_mem / total_memory) * 100 if total_memory > 0 else 0
     )
 
+    c1, c2, c3, c4, c5 = st.columns(5)
+    c1.metric("Allocated", f"{allocated_count}/{len(processes)}")
+    c2.metric("Unallocated", unallocated_count)
+    c3.metric("Total Internal Frag.", f"{total_internal_frag} KB")
+    c4.metric("External Frag.", f"{external_frag} KB")
+    c5.metric("System Utilization", f"{utilization:.2f}%")
+
+    if logs:
+        with st.expander(f"🔍 Step-by-Step Allocation Trace ({name})"):
+            for item in logs:
+                st.markdown(f"**Process {item['process']} ({item['size']} KB):**")
+                for step in item["steps"]:
+                    st.write(f"- {step}")
+                st.write("")
+
+    display_memory(blocks, processes, allocation, occupied, internal_frag)
+
 
 # ============================================================
-# RUN SIMULATION
+# EXECUTION LOGIC (BUTTON TRIGGERS)
 # ============================================================
 
-if st.button(
-    "Run Simulation",
-    type="primary",
-    width="stretch"
-):
+selected_action = None
+if btn_first:
+    selected_action = "First Fit"
+elif btn_best:
+    selected_action = "Best Fit"
+elif btn_worst:
+    selected_action = "Worst Fit"
+elif btn_compare:
+    selected_action = "Compare All"
 
-    # --------------------------------------------------------
-    # VALIDATE INPUTS
-    # --------------------------------------------------------
-
+if selected_action:
     try:
-
-        blocks = parse_input(
-            block_input
-        )
-
-        processes = parse_input(
-            process_input
-        )
-
+        blocks = parse_input(block_input)
+        processes = parse_input(process_input)
     except ValueError as e:
-
-        st.error(
-            str(e)
-        )
-
+        st.error(str(e))
         st.stop()
 
-    # ========================================================
-    # FIRST FIT
-    # ========================================================
+    algo_map = {
+        "First Fit": first_fit,
+        "Best Fit": best_fit,
+        "Worst Fit": worst_fit,
+    }
 
-    if algorithm == "First Fit":
-
-        allocation, remaining = first_fit(
-            blocks,
-            processes
-        )
-
-        display_results(
-            "First Fit",
-            blocks,
-            processes,
-            allocation,
-            remaining
-        )
-
-    # ========================================================
-    # BEST FIT
-    # ========================================================
-
-    elif algorithm == "Best Fit":
-
-        allocation, remaining = best_fit(
-            blocks,
-            processes
-        )
-
-        display_results(
-            "Best Fit",
-            blocks,
-            processes,
-            allocation,
-            remaining
-        )
-
-    # ========================================================
-    # WORST FIT
-    # ========================================================
-
-    elif algorithm == "Worst Fit":
-
-        allocation, remaining = worst_fit(
-            blocks,
-            processes
-        )
-
-        display_results(
-            "Worst Fit",
-            blocks,
-            processes,
-            allocation,
-            remaining
-        )
-
-    # ========================================================
-    # COMPARE ALL ALGORITHMS
-    # ========================================================
-
-    else:
+    if selected_action in algo_map:
+        alloc, occ, frag, logs = run_algorithm(algo_map[selected_action], blocks, processes)
+        display_results(selected_action, blocks, processes, alloc, occ, frag, logs)
+    elif selected_action == "Compare All":
+        st.markdown('<div class="section-title">Comparative Performance Analysis</div>', unsafe_allow_html=True)
 
         results = {}
+        for name, func in algo_map.items():
+            alloc, occ, frag, logs = run_algorithm(func, blocks, processes)
+            results[name] = {"allocation": alloc, "occupied": occ, "internal_frag": frag, "logs": logs}
 
-        # ----------------------------------------------------
-        # RUN ALL THREE ALGORITHMS
-        # ----------------------------------------------------
+        comp_data = []
+        algo_names = []
+        allocated_list = []
+        unallocated_list = []
+        utilization_list = []
+        total_mem = sum(blocks)
+        total_processes = len(processes)
 
-        for name, function in [
-            ("First Fit", first_fit),
-            ("Best Fit", best_fit),
-            ("Worst Fit", worst_fit)
-        ]:
+        for name, res in results.items():
+            alloc = res["allocation"]
+            occ = res["occupied"]
+            frag = res["internal_frag"]
 
-            allocation, remaining = function(
-                blocks,
-                processes
+            allocated_count = sum(1 for x in alloc if x != -1)
+            unallocated_count = len(processes) - allocated_count
+            allocated_proc_mem = sum(
+                processes[i] for i, b in enumerate(alloc) if b != -1
             )
-
-            results[name] = {
-                "allocation": allocation,
-                "remaining": remaining
-            }
-
-        # ----------------------------------------------------
-        # COMPARISON TABLE
-        # ----------------------------------------------------
-
-        st.header("Algorithm Comparison")
-
-        comparison_data = []
-
-        for name in [
-            "First Fit",
-            "Best Fit",
-            "Worst Fit"
-        ]:
-
-            allocation = results[name]["allocation"]
-
-            remaining = results[name]["remaining"]
-
-            allocated_count = sum(
-                1
-                for x in allocation
-                if x != -1
+            total_int_frag = sum(frag)
+            ext_frag = (
+                sum(blocks[i] for i in range(len(blocks)) if not occ[i])
+                if unallocated_count > 0
+                else 0
             )
-
-            unallocated_count = (
-                len(processes)
-                - allocated_count
-            )
-
-            remaining_memory = sum(
-                remaining
-            )
-
-            comparison_data.append(
-                {
-                    "Algorithm": name,
-                    "Allocated Processes":
-                        allocated_count,
-                    "Unallocated Processes":
-                        unallocated_count,
-                    "Remaining Memory (KB)":
-                        remaining_memory
-                }
-            )
-
-        st.table(
-            comparison_data
-        )
-
-        # ----------------------------------------------------
-        # PROCESS ALLOCATION COMPARISON
-        # ----------------------------------------------------
-
-        st.subheader(
-            "Process Allocation Comparison"
-        )
-
-        chart_data = []
-
-        for name in [
-            "First Fit",
-            "Best Fit",
-            "Worst Fit"
-        ]:
-
-            allocation = results[name]["allocation"]
-
-            allocated_count = sum(
-                1
-                for x in allocation
-                if x != -1
-            )
-
-            unallocated_count = (
-                len(processes)
-                - allocated_count
-            )
-
-            chart_data.append(
-                {
-                    "Algorithm": name,
-                    "Allocated": allocated_count,
-                    "Unallocated": unallocated_count
-                }
-            )
-
-        st.bar_chart(
-            chart_data,
-            x="Algorithm",
-            y=[
-                "Allocated",
-                "Unallocated"
-            ]
-        )
-
-        # ----------------------------------------------------
-        # MEMORY UTILIZATION COMPARISON
-        # ----------------------------------------------------
-
-        st.subheader(
-            "Memory Utilization Comparison"
-        )
-
-        utilization_data = []
-
-        total_memory = sum(blocks)
-
-        for name in [
-            "First Fit",
-            "Best Fit",
-            "Worst Fit"
-        ]:
-
-            remaining = results[name]["remaining"]
-
-            remaining_memory = sum(
-                remaining
-            )
-
-            used_memory = (
-                total_memory
-                - remaining_memory
-            )
-
             utilization = (
-                used_memory
-                / total_memory
-            ) * 100
+                (allocated_proc_mem / total_mem) * 100 if total_mem > 0 else 0
+            )
 
-            utilization_data.append(
+            comp_data.append(
                 {
-                    "Algorithm": name,
-                    "Memory Utilization (%)":
-                        round(utilization, 2)
+                    "Algorithm": f"<b>{name}</b>",
+                    "Allocated Processes": allocated_count,
+                    "Unallocated Processes": unallocated_count,
+                    "Internal Frag.": f"{total_int_frag} KB",
+                    "External Frag.": f"{ext_frag} KB",
+                    "Memory Utilization": f"<b>{utilization:.2f}%</b>",
                 }
             )
 
-        st.bar_chart(
-            utilization_data,
-            x="Algorithm",
-            y="Memory Utilization (%)"
-        )
+            algo_names.append(name)
+            allocated_list.append(allocated_count)
+            unallocated_list.append(unallocated_count)
+            utilization_list.append(round(utilization, 2))
 
-        # ====================================================
-        # DETAILED RESULTS
-        # ====================================================
+        df_comp = pd.DataFrame(comp_data)
+        st.markdown(df_comp.to_html(classes="styled-table", index=False, escape=False), unsafe_allow_html=True)
 
-        st.header("Detailed Results")
+        # ========================================================
+        # ROBUST NATIVE VISUALIZERS (NO INDENTATION BUGS)
+        # ========================================================
+        chart_col1, chart_col2 = st.columns(2)
 
-        # ----------------------------------------------------
-        # FIRST FIT
-        # ----------------------------------------------------
+        # Chart Card 1: Process Allocation Success Breakdown
+        with chart_col1:
+            st.markdown(
+                '<div class="analytics-box"><div class="analytics-header">Process Allocation Success Breakdown</div>',
+                unsafe_allow_html=True,
+            )
+            for name, alloc_c, unalloc_c in zip(algo_names, allocated_list, unallocated_list):
+                col_n, col_p = st.columns([1, 2])
+                with col_n:
+                    st.markdown(f"**{name}**")
+                    st.caption(f"{alloc_c} of {total_processes} Jobs Allocated")
+                with col_p:
+                    ratio = alloc_c / total_processes if total_processes > 0 else 0
+                    st.progress(ratio)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-        allocation = results[
-            "First Fit"
-        ]["allocation"]
-
-        remaining = results[
-            "First Fit"
-        ]["remaining"]
-
-        display_results(
-            "First Fit",
-            blocks,
-            processes,
-            allocation,
-            remaining
-        )
-
-        st.divider()
-
-        # ----------------------------------------------------
-        # BEST FIT
-        # ----------------------------------------------------
-
-        allocation = results[
-            "Best Fit"
-        ]["allocation"]
-
-        remaining = results[
-            "Best Fit"
-        ]["remaining"]
-
-        display_results(
-            "Best Fit",
-            blocks,
-            processes,
-            allocation,
-            remaining
-        )
+        # Chart Card 2: Memory Utilization Efficiency
+        with chart_col2:
+            st.markdown(
+                '<div class="analytics-box"><div class="analytics-header">Memory Utilization Efficiency (%)</div>',
+                unsafe_allow_html=True,
+            )
+            for name, util_val in zip(algo_names, utilization_list):
+                col_n, col_p = st.columns([1, 2])
+                with col_n:
+                    st.markdown(f"**{name}**")
+                    st.caption(f"{util_val:.2f}% System Utilization")
+                with col_p:
+                    ratio = min(max(util_val / 100.0, 0.0), 1.0)
+                    st.progress(ratio)
+            st.markdown("</div>", unsafe_allow_html=True)
 
         st.divider()
+        st.markdown('<div class="section-title">Detailed Strategy Outputs</div>', unsafe_allow_html=True)
 
-        # ----------------------------------------------------
-        # WORST FIT
-        # ----------------------------------------------------
-
-        allocation = results[
-            "Worst Fit"
-        ]["allocation"]
-
-        remaining = results[
-            "Worst Fit"
-        ]["remaining"]
-
-        display_results(
-            "Worst Fit",
-            blocks,
-            processes,
-            allocation,
-            remaining
-        )
-
-
-# ============================================================
-# FOOTER
-# ============================================================
-
-st.markdown(
-    '<div class="footer">'
-    'Contiguous Memory Allocation Simulator | '
-    'Operating Systems Mini Project'
-    '</div>',
-    unsafe_allow_html=True
-)
+        for name, res in results.items():
+            display_results(
+                name,
+                blocks,
+                processes,
+                res["allocation"],
+                res["occupied"],
+                res["internal_frag"],
+                res["logs"],
+            )
+            st.divider()

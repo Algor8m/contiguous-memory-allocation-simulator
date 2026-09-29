@@ -21,9 +21,9 @@ st.set_page_config(
 
 PRIMARY_RED = "#9E1B32"
 HOVER_RED = "#7E1426"
-DARK_TEXT = "#1A1A1A"
-MUTED_TEXT = "#555555"
-LIGHT_BG = "#F8F9FA"
+DARK_TEXT = "#111111"
+MUTED_TEXT = "#333333"
+LIGHT_BG = "#F4F6F8"
 CARD_BG = "#FFFFFF"
 BORDER_COLOR = "#DDE2E5"
 
@@ -34,16 +34,25 @@ BORDER_COLOR = "#DDE2E5"
 st.markdown(
     f"""<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Completely hide Streamlit default top ribbon */
+header[data-testid="stHeader"] {{
+    display: none !important;
+}}
+#MainMenu, footer {{
+    visibility: hidden;
+}}
+
 .stApp {{
     background-color: #F4F6F8;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }}
 .block-container {{
-    padding-top: 1.5rem;
-    padding-bottom: 3rem;
+    padding-top: 1rem !important;
+    padding-bottom: 3.5rem;
     max-width: 1350px;
 }}
-.stApp p, .stApp span, .stApp label {{
+.stApp p, .stApp span, .stApp label, .stApp div {{
     color: {DARK_TEXT};
 }}
 .header-card {{
@@ -51,8 +60,8 @@ st.markdown(
     border: 1px solid {BORDER_COLOR};
     border-top: 4px solid {PRIMARY_RED};
     border-radius: 6px;
-    padding: 24px 28px;
-    margin-bottom: 20px;
+    padding: 22px 26px;
+    margin-bottom: 16px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }}
 .header-tag {{
@@ -75,21 +84,21 @@ st.markdown(
     margin-top: 6px;
     line-height: 1.5;
 }}
-.team-badge-container {{
+.team-container {{
     background-color: #FFFFFF;
     border: 1px solid {BORDER_COLOR};
     border-radius: 6px;
-    padding: 12px 18px;
-    margin-bottom: 20px;
+    padding: 10px 16px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }}
 .team-title {{
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12.5px;
     color: {PRIMARY_RED} !important;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -109,6 +118,7 @@ st.markdown(
     border: 1px solid {BORDER_COLOR};
     border-radius: 6px;
     padding: 20px;
+    margin-top: 16px;
     margin-bottom: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }}
@@ -119,6 +129,7 @@ st.markdown(
     border-left: 4px solid {PRIMARY_RED};
     padding-left: 10px;
     margin-bottom: 16px;
+    margin-top: 20px;
     letter-spacing: 0.3px;
 }}
 div[data-testid="stTextInput"] label {{
@@ -147,7 +158,7 @@ div.stButton > button {{
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.8px !important;
-    padding: 10px 18px !important;
+    padding: 10px 16px !important;
     transition: 0.2s ease-in-out;
     width: 100%;
 }}
@@ -231,23 +242,91 @@ div[data-testid="stMetric"] {{
     line-height: 1.6;
     color: {DARK_TEXT};
 }}
-.analytics-box {{
+.trace-card {{
     background-color: #FFFFFF;
     border: 1px solid {BORDER_COLOR};
+    border-left: 4px solid {PRIMARY_RED};
     border-radius: 6px;
-    padding: 18px 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }}
-.analytics-header {{
-    font-size: 15px;
+.trace-title {{
     font-weight: 700;
+    font-size: 14px;
+    color: {PRIMARY_RED};
+    margin-bottom: 6px;
+}}
+.trace-step {{
+    font-size: 13px;
     color: {DARK_TEXT};
-    margin-bottom: 14px;
+    padding: 2px 0;
 }}
 </style>""",
     unsafe_allow_html=True,
 )
+
+# ============================================================
+# COMPREHENSIVE THEORY & CONCEPTS MODAL DIALOG
+# ============================================================
+
+@st.dialog("Operating Systems — Memory Management Academic Guide", width="large")
+def show_theory_dialog():
+    st.subheader("1. Fundamental Concept: Contiguous Memory Allocation")
+    st.write(
+        "In **contiguous memory allocation**, each program must occupy a single continuous block of physical memory addresses. "
+        "This project implements **Fixed Partitioning (Multiprogramming with a Fixed number of Tasks - MFT)**:"
+    )
+    st.markdown(
+        "- **Predefined Partitions:** Memory is divided into static partitions of predefined sizes at system startup.\n"
+        "- **Single Process Rule:** Each partition can hold at most **one process** at any given time. Any remaining space inside an occupied partition cannot be given to another job.\n"
+        "- **Degree of Multiprogramming:** Directly limited by the total number of partitions configured."
+    )
+    st.divider()
+
+    st.subheader("2. Fragmentation Formulations")
+    st.write("**A. Internal Fragmentation:** Unused space trapped inside an occupied partition that cannot be used by any other process.")
+    st.code("Internal Fragmentation = Partition_Size - Process_Size  (for Occupied Partition)", language="text")
+
+    st.write("**B. External Fragmentation:** Total free memory available across unoccupied partitions when an unallocated process cannot run because no single partition is large enough.")
+    st.code("External Fragmentation = sum(Unoccupied Partition Sizes)  [if unallocated processes exist]", language="text")
+
+    st.write("**C. Memory Utilization Efficiency:**")
+    st.code("Utilization (%) = (Total Allocated Processes Size / Total System Memory) * 100", language="text")
+    st.divider()
+
+    st.subheader("3. Allocation Strategies: Mechanics & Trade-offs")
+
+    with st.container(border=True):
+        st.markdown(f"#### :red[First Fit]")
+        st.markdown(
+            "- **Logic:** Scans partitions sequentially from the first block and allocates the process to the **very first partition** that is large enough.\n"
+            "- **Time Complexity:** $O(n)$ in the worst case, but has the fastest average search time.\n"
+            "- **Advantages:** Very fast allocation with minimal CPU overhead.\n"
+            "- **Disadvantages:** Tends to accumulate small unusable fragments near the beginning of memory."
+        )
+
+    with st.container(border=True):
+        st.markdown(f"#### :red[Best Fit]")
+        st.markdown(
+            "- **Logic:** Searches through all partitions and allocates the process to the **smallest partition** that can accommodate it.\n"
+            "- **Time Complexity:** $O(n)$ always (must inspect every partition).\n"
+            "- **Advantages:** Minimizes internal fragmentation within the chosen partition.\n"
+            "- **Disadvantages:** Slower due to full list traversal; creates very small, scattered leftover fragments."
+        )
+
+    with st.container(border=True):
+        st.markdown(f"#### :red[Worst Fit]")
+        st.markdown(
+            "- **Logic:** Searches all partitions and allocates the process into the **largest available partition**.\n"
+            "- **Time Complexity:** $O(n)$ always (must inspect every partition).\n"
+            "- **Advantages:** Leaves the largest possible leftover fragments, which may fit future incoming jobs.\n"
+            "- **Disadvantages:** Quickly uses up the largest partitions, causing future large processes to fail."
+        )
+
+    st.write("")
+    if st.button("Close Guide", use_container_width=True):
+        st.rerun()
 
 # ============================================================
 # LOGO & HEADER BANNER
@@ -266,7 +345,12 @@ with logo_col:
 
 with title_col:
     st.markdown(
-        f'<div class="header-card" style="margin-bottom: 0;"><div class="header-tag">Operating Systems | Unit 5 – Memory Management</div><h1 class="header-title">Contiguous Memory Allocation Simulator</h1><div class="header-desc">Partition-based memory allocation strategies: <b>First Fit</b>, <b>Best Fit</b>, and <b>Worst Fit</b>. Calculates partition assignment, internal fragmentation, external fragmentation, and allocation efficiency.</div></div>',
+        f'<div class="header-card" style="margin-bottom: 0;">'
+        f'<div class="header-tag">Operating Systems | Unit 5 – Memory Management</div>'
+        f'<h1 class="header-title">Contiguous Memory Allocation Simulator</h1>'
+        f'<div class="header-desc">Simulate and evaluate partition-based contiguous memory strategies: '
+        f'<b>First Fit</b>, <b>Best Fit</b>, and <b>Worst Fit</b>. Analyzes partition assignment, internal fragmentation, external fragmentation, and allocation efficiency.</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -277,16 +361,28 @@ st.write("")
 # ============================================================
 
 st.markdown(
-    '<div class="team-badge-container"><span class="team-title">Developed By:</span><div class="student-tag">Ritam Mahakur &nbsp;<b>(C001)</b></div><div class="student-tag">Nandini Devnani &nbsp;<b>(C005)</b></div><div class="student-tag">Sahasra &nbsp;<b>(C046)</b></div></div>',
+    '<div class="team-container">'
+    '<span class="team-title">Developed By:</span>'
+    '<div class="student-tag">Ritam Mahakur &nbsp;<b>(C001)</b></div>'
+    '<div class="student-tag">Nandini Devnani &nbsp;<b>(C005)</b></div>'
+    '<div class="student-tag">Sahasra &nbsp;<b>(C046)</b></div>'
+    '</div>',
     unsafe_allow_html=True,
 )
+
+# ============================================================
+# FULL-WIDTH THEORY BUTTON
+# ============================================================
+
+if st.button("📖 Click for Explanation", use_container_width=True):
+    show_theory_dialog()
 
 # ============================================================
 # CONFIGURATION INPUT PANEL
 # ============================================================
 
 st.markdown('<div class="content-panel">', unsafe_allow_html=True)
-st.markdown('<div class="section-title">Configuration Parameters</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title" style="margin-top: 0;">Configuration Parameters</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
@@ -304,24 +400,27 @@ with col2:
         help="Enter incoming job sizes separated by commas.",
     )
 
-st.markdown('<div class="section-title" style="margin-top: 15px;">Run Allocation Strategy</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Run Allocation Strategy</div>', unsafe_allow_html=True)
 
 btn_col1, btn_col2, btn_col3, btn_col4 = st.columns(4)
 
 with btn_col1:
-    btn_first = st.button("First Fit", use_container_width=True)
+    if st.button("First Fit", use_container_width=True):
+        st.session_state["active_algo"] = "First Fit"
 
 with btn_col2:
-    btn_best = st.button("Best Fit", use_container_width=True)
+    if st.button("Best Fit", use_container_width=True):
+        st.session_state["active_algo"] = "Best Fit"
 
 with btn_col3:
-    btn_worst = st.button("Worst Fit", use_container_width=True)
+    if st.button("Worst Fit", use_container_width=True):
+        st.session_state["active_algo"] = "Worst Fit"
 
 with btn_col4:
-    btn_compare = st.button("Compare All", use_container_width=True)
+    if st.button("Compare All", use_container_width=True):
+        st.session_state["active_algo"] = "Compare All"
 
 st.markdown("</div>", unsafe_allow_html=True)
-
 
 # ============================================================
 # INPUT PARSER
@@ -357,7 +456,6 @@ def run_algorithm(func, blocks, processes):
         return res[0], res[1], res[2], []
     else:
         return res[0], [False] * len(blocks), [0] * len(blocks), []
-
 
 # ============================================================
 # MEMORY VISUALIZER
@@ -408,7 +506,6 @@ def display_memory(blocks, processes, allocation, occupied, internal_frag):
             )
             with cols[col_idx]:
                 st.markdown(card_html, unsafe_allow_html=True)
-
 
 # ============================================================
 # RESULTS RENDERER
@@ -469,31 +566,26 @@ def display_results(name, blocks, processes, allocation, occupied, internal_frag
     c5.metric("System Utilization", f"{utilization:.2f}%")
 
     if logs:
-        with st.expander(f"🔍 Step-by-Step Allocation Trace ({name})"):
-            for item in logs:
-                st.markdown(f"**Process {item['process']} ({item['size']} KB):**")
-                for step in item["steps"]:
-                    st.write(f"- {step}")
-                st.write("")
+        st.markdown('<div class="section-title">Step-by-Step Allocation Trace</div>', unsafe_allow_html=True)
+        for item in logs:
+            steps_html = "".join([f'<div class="trace-step">• {s}</div>' for s in item["steps"]])
+            trace_box = (
+                f'<div class="trace-card">'
+                f'<div class="trace-title">{item["process"]} ({item["size"]} KB) Allocation Trace:</div>'
+                f'{steps_html}'
+                f'</div>'
+            )
+            st.markdown(trace_box, unsafe_allow_html=True)
 
     display_memory(blocks, processes, allocation, occupied, internal_frag)
 
-
 # ============================================================
-# EXECUTION LOGIC (BUTTON TRIGGERS)
+# PERSISTENT EXECUTION LOGIC (VIA SESSION STATE)
 # ============================================================
 
-selected_action = None
-if btn_first:
-    selected_action = "First Fit"
-elif btn_best:
-    selected_action = "Best Fit"
-elif btn_worst:
-    selected_action = "Worst Fit"
-elif btn_compare:
-    selected_action = "Compare All"
+active_action = st.session_state.get("active_algo", None)
 
-if selected_action:
+if active_action:
     try:
         blocks = parse_input(block_input)
         processes = parse_input(process_input)
@@ -507,10 +599,10 @@ if selected_action:
         "Worst Fit": worst_fit,
     }
 
-    if selected_action in algo_map:
-        alloc, occ, frag, logs = run_algorithm(algo_map[selected_action], blocks, processes)
-        display_results(selected_action, blocks, processes, alloc, occ, frag, logs)
-    elif selected_action == "Compare All":
+    if active_action in algo_map:
+        alloc, occ, frag, logs = run_algorithm(algo_map[active_action], blocks, processes)
+        display_results(active_action, blocks, processes, alloc, occ, frag, logs)
+    elif active_action == "Compare All":
         st.markdown('<div class="section-title">Comparative Performance Analysis</div>', unsafe_allow_html=True)
 
         results = {}
@@ -565,15 +657,12 @@ if selected_action:
         df_comp = pd.DataFrame(comp_data)
         st.markdown(df_comp.to_html(classes="styled-table", index=False, escape=False), unsafe_allow_html=True)
 
-        # ========================================================
-        # ROBUST NATIVE VISUALIZERS (NO INDENTATION BUGS)
-        # ========================================================
         chart_col1, chart_col2 = st.columns(2)
 
-        # Chart Card 1: Process Allocation Success Breakdown
         with chart_col1:
             st.markdown(
-                '<div class="analytics-box"><div class="analytics-header">Process Allocation Success Breakdown</div>',
+                '<div style="background-color: #FFFFFF; border: 1px solid #DDE2E5; border-radius: 6px; padding: 18px 20px; margin-bottom: 16px;">'
+                '<div style="font-size: 15px; font-weight: 700; color: #111111; margin-bottom: 14px;">Process Allocation Success Ratio</div>',
                 unsafe_allow_html=True,
             )
             for name, alloc_c, unalloc_c in zip(algo_names, allocated_list, unallocated_list):
@@ -586,10 +675,10 @@ if selected_action:
                     st.progress(ratio)
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # Chart Card 2: Memory Utilization Efficiency
         with chart_col2:
             st.markdown(
-                '<div class="analytics-box"><div class="analytics-header">Memory Utilization Efficiency (%)</div>',
+                '<div style="background-color: #FFFFFF; border: 1px solid #DDE2E5; border-radius: 6px; padding: 18px 20px; margin-bottom: 16px;">'
+                '<div style="font-size: 15px; font-weight: 700; color: #111111; margin-bottom: 14px;">Memory Utilization Efficiency (%)</div>',
                 unsafe_allow_html=True,
             )
             for name, util_val in zip(algo_names, utilization_list):

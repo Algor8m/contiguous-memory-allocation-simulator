@@ -49,7 +49,7 @@ header[data-testid="stHeader"] {{
 }}
 .block-container {{
     padding-top: 1rem !important;
-    padding-bottom: 3.5rem;
+    padding-bottom: 2rem;
     max-width: 1350px;
 }}
 .stApp p, .stApp span, .stApp label, .stApp div {{
@@ -61,7 +61,7 @@ header[data-testid="stHeader"] {{
     border-top: 4px solid {PRIMARY_RED};
     border-radius: 6px;
     padding: 22px 26px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }}
 .header-tag {{
@@ -84,41 +84,12 @@ header[data-testid="stHeader"] {{
     margin-top: 6px;
     line-height: 1.5;
 }}
-.team-container {{
-    background-color: #FFFFFF;
-    border: 1px solid {BORDER_COLOR};
-    border-radius: 6px;
-    padding: 10px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-}}
-.team-title {{
-    font-weight: 700;
-    font-size: 12.5px;
-    color: {PRIMARY_RED} !important;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}}
-.student-tag {{
-    background-color: #F8F9FA;
-    border: 1px solid {BORDER_COLOR};
-    border-left: 3px solid {PRIMARY_RED};
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    color: {DARK_TEXT};
-}}
 .content-panel {{
     background-color: {CARD_BG};
     border: 1px solid {BORDER_COLOR};
     border-radius: 6px;
     padding: 20px;
-    margin-top: 16px;
+    margin-top: 14px;
     margin-bottom: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }}
@@ -209,16 +180,58 @@ div[data-testid="stMetric"] {{
 .styled-table tbody tr:last-of-type td {{
     border-bottom: none;
 }}
+
+/* ============================================================
+   BEAUTIFIED MEMORY MAP STYLES
+   ============================================================ */
+.ram-bar-container {{
+    display: flex;
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid {BORDER_COLOR};
+    background-color: #EAEDF1;
+    margin-bottom: 22px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}}
+.ram-segment {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-right: 1px solid rgba(255, 255, 255, 0.4);
+    transition: 0.2s ease;
+    padding: 0 4px;
+}}
+.ram-segment-occupied {{
+    background: linear-gradient(135deg, #9E1B32 0%, #BA243F 100%);
+    color: #FFFFFF !important;
+}}
+.ram-segment-free {{
+    background: linear-gradient(135deg, #E2E8F0 0%, #CBD5E1 100%);
+    color: #475569 !important;
+}}
 .memory-block-card {{
     background-color: #FFFFFF;
     border: 1px solid {BORDER_COLOR};
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
-    margin-bottom: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    margin-bottom: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease;
+}}
+.memory-block-card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
 }}
 .memory-block-header {{
-    padding: 8px 12px;
+    padding: 10px 14px;
     font-weight: 700;
     font-size: 13px;
     display: flex;
@@ -232,22 +245,64 @@ div[data-testid="stMetric"] {{
     border-left: 4px solid {PRIMARY_RED};
 }}
 .block-free {{
-    background-color: #F8F9FA;
-    color: {MUTED_TEXT};
-    border-left: 4px solid #A0AEC0;
+    background-color: #F8FAFC;
+    color: #475569;
+    border-left: 4px solid #94A3B8;
+}}
+.status-pill {{
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}}
+.status-pill-occupied {{
+    background-color: #FCE8E8;
+    color: {PRIMARY_RED};
+}}
+.status-pill-free {{
+    background-color: #E2E8F0;
+    color: #475569;
 }}
 .memory-block-body {{
-    padding: 12px;
+    padding: 14px;
     font-size: 13px;
     line-height: 1.6;
     color: {DARK_TEXT};
 }}
+.fill-bar-bg {{
+    width: 100%;
+    height: 8px;
+    background-color: #EDF2F7;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0 12px 0;
+}}
+.fill-bar-progress {{
+    height: 100%;
+    border-radius: 4px;
+}}
+.detail-row {{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: 12px;
+}}
+.detail-label {{
+    color: #64748B;
+    font-weight: 500;
+}}
+.detail-value {{
+    font-weight: 700;
+    color: {DARK_TEXT};
+}}
+
 .trace-card {{
     background-color: #FFFFFF;
     border: 1px solid {BORDER_COLOR};
     border-left: 4px solid {PRIMARY_RED};
     border-radius: 6px;
-    padding: 14px 18px;
+    padding: 12px 16px;
     margin-bottom: 10px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }}
@@ -261,6 +316,62 @@ div[data-testid="stMetric"] {{
     font-size: 13px;
     color: {DARK_TEXT};
     padding: 2px 0;
+}}
+
+/* ============================================================
+   MATCHING LIGHT MODAL DIALOG STYLES
+   ============================================================ */
+div[data-testid="stDialog"] div[role="dialog"] {{
+    background-color: #FFFFFF !important;
+    border: 1px solid {BORDER_COLOR} !important;
+    border-top: 5px solid {PRIMARY_RED} !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}}
+div[data-testid="stDialog"] div[role="dialog"] * {{
+    color: {DARK_TEXT} !important;
+}}
+div[data-testid="stDialog"] div[role="dialog"] h1,
+div[data-testid="stDialog"] div[role="dialog"] h2,
+div[data-testid="stDialog"] div[role="dialog"] h3,
+div[data-testid="stDialog"] div[role="dialog"] h4 {{
+    color: {PRIMARY_RED} !important;
+    font-weight: 700 !important;
+}}
+div[data-testid="stDialog"] div[role="dialog"] pre,
+div[data-testid="stDialog"] div[role="dialog"] code {{
+    background-color: #F8F9FA !important;
+    color: {DARK_TEXT} !important;
+    border: 1px solid {BORDER_COLOR} !important;
+}}
+div[data-testid="stDialog"] div[role="dialog"] div[data-testid="stVerticalBlockBorderWrapper"] {{
+    background-color: #FFFFFF !important;
+    border: 1px solid {BORDER_COLOR} !important;
+    border-left: 4px solid {PRIMARY_RED} !important;
+    border-radius: 6px !important;
+}}
+div[data-testid="stDialog"] button {{
+    background-color: {PRIMARY_RED} !important;
+}}
+div[data-testid="stDialog"] button * {{
+    color: #FFFFFF !important;
+}}
+
+/* Footer Watermark */
+.footer-watermark {{
+    text-align: center;
+    padding-top: 35px;
+    padding-bottom: 10px;
+    font-size: 13px;
+    color: #666666 !important;
+}}
+.footer-watermark a {{
+    color: {PRIMARY_RED} !important;
+    text-decoration: none;
+    font-weight: 700;
+}}
+.footer-watermark a:hover {{
+    text-decoration: underline;
 }}
 </style>""",
     unsafe_allow_html=True,
@@ -298,7 +409,7 @@ def show_theory_dialog():
     st.subheader("3. Allocation Strategies: Mechanics & Trade-offs")
 
     with st.container(border=True):
-        st.markdown(f"#### :red[First Fit]")
+        st.markdown("#### First Fit")
         st.markdown(
             "- **Logic:** Scans partitions sequentially from the first block and allocates the process to the **very first partition** that is large enough.\n"
             "- **Time Complexity:** $O(n)$ in the worst case, but has the fastest average search time.\n"
@@ -307,7 +418,7 @@ def show_theory_dialog():
         )
 
     with st.container(border=True):
-        st.markdown(f"#### :red[Best Fit]")
+        st.markdown("#### Best Fit")
         st.markdown(
             "- **Logic:** Searches through all partitions and allocates the process to the **smallest partition** that can accommodate it.\n"
             "- **Time Complexity:** $O(n)$ always (must inspect every partition).\n"
@@ -316,7 +427,7 @@ def show_theory_dialog():
         )
 
     with st.container(border=True):
-        st.markdown(f"#### :red[Worst Fit]")
+        st.markdown("#### Worst Fit")
         st.markdown(
             "- **Logic:** Searches all partitions and allocates the process into the **largest available partition**.\n"
             "- **Time Complexity:** $O(n)$ always (must inspect every partition).\n"
@@ -355,20 +466,6 @@ with title_col:
     )
 
 st.write("")
-
-# ============================================================
-# DEVELOPER CREDITS
-# ============================================================
-
-st.markdown(
-    '<div class="team-container">'
-    '<span class="team-title">Developed By:</span>'
-    '<div class="student-tag">Ritam Mahakur &nbsp;<b>(C001)</b></div>'
-    '<div class="student-tag">Nandini Devnani &nbsp;<b>(C005)</b></div>'
-    '<div class="student-tag">Sahasra &nbsp;<b>(C046)</b></div>'
-    '</div>',
-    unsafe_allow_html=True,
-)
 
 # ============================================================
 # FULL-WIDTH THEORY BUTTON
@@ -458,12 +555,39 @@ def run_algorithm(func, blocks, processes):
         return res[0], [False] * len(blocks), [0] * len(blocks), []
 
 # ============================================================
-# MEMORY VISUALIZER
+# CLEAN & BEAUTIFUL MEMORY MAP VISUALIZER
 # ============================================================
 
 def display_memory(blocks, processes, allocation, occupied, internal_frag):
-    st.markdown('<div class="section-title">Partition Memory Map</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Physical Partition Memory Map</div>', unsafe_allow_html=True)
+    st.caption("Visual representation of total physical RAM. Red areas show running programs; grey areas represent unused memory space.")
 
+    total_mem = sum(blocks)
+
+    # 1. Proportional RAM Bar Visualizer
+    bar_html = '<div class="ram-bar-container">'
+    for idx, capacity in enumerate(blocks):
+        width_pct = max((capacity / total_mem) * 100, 6.0)
+        is_occ = occupied[idx]
+        
+        assigned_name = "Empty"
+        for p_idx, b_idx in enumerate(allocation):
+            if b_idx == idx:
+                assigned_name = f"P{p_idx + 1}"
+                break
+                
+        seg_class = "ram-segment-occupied" if is_occ else "ram-segment-free"
+        label = f"Block {idx + 1} ➔ {assigned_name}" if is_occ else f"Block {idx + 1}: Free"
+        
+        bar_html += f'<div class="ram-segment {seg_class}" style="width: {width_pct:.2f}%;" title="Partition {idx + 1}: {capacity} KB">'
+        bar_html += f'<span>{label}</span>'
+        bar_html += f'<span style="font-size: 9px; opacity: 0.85;">{capacity} KB</span>'
+        bar_html += '</div>'
+    bar_html += '</div>'
+
+    st.markdown(bar_html, unsafe_allow_html=True)
+
+    # 2. Detailed Partition Block Cards
     cols_per_row = 4
     total_blocks = len(blocks)
 
@@ -481,29 +605,55 @@ def display_memory(blocks, processes, allocation, occupied, internal_frag):
                     process_size = processes[p_idx]
                     break
 
-            if occupied[block_idx]:
+            is_occ = occupied[block_idx]
+            cap = blocks[block_idx]
+            used_pct = round((process_size / cap) * 100, 1) if is_occ else 0
+            
+            if is_occ:
                 header_class = "block-occupied"
-                status_label = "OCCUPIED"
-                frag_val = f"{internal_frag[block_idx]} KB"
+                pill_class = "status-pill-occupied"
+                status_text = "IN USE"
+                progress_color = PRIMARY_RED
+                unused_title = "Wasted Space inside block"
             else:
                 header_class = "block-free"
-                status_label = "FREE"
-                frag_val = "0 KB"
+                pill_class = "status-pill-free"
+                status_text = "AVAILABLE"
+                progress_color = "#94A3B8"
+                unused_title = "Unused Space"
 
-            card_html = (
-                f'<div class="memory-block-card">'
-                f'<div class="memory-block-header {header_class}">'
-                f'<span>Partition {block_idx + 1}</span>'
-                f'<span>{status_label}</span>'
-                f'</div>'
-                f'<div class="memory-block-body">'
-                f'<b>Total Capacity:</b> {blocks[block_idx]} KB<br>'
-                f'<b>Active Process:</b> {allocated_proc} ({process_size} KB)<br>'
-                f'<b>Internal Frag.:</b> {frag_val}<br>'
-                f'<b>Unused Space:</b> {blocks[block_idx] - process_size} KB'
-                f'</div>'
-                f'</div>'
-            )
+            frag_display = f"{internal_frag[block_idx]} KB" if is_occ else "0 KB"
+            unused_space = cap - process_size
+
+            card_html = f"""
+            <div class="memory-block-card">
+                <div class="memory-block-header {header_class}">
+                    <span>Partition {block_idx + 1}</span>
+                    <span class="status-pill {pill_class}">{status_text}</span>
+                </div>
+                <div class="memory-block-body">
+                    <div class="detail-row">
+                        <span class="detail-label">Total Size:</span>
+                        <span class="detail-value">{cap} KB</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Assigned Program:</span>
+                        <span class="detail-value">{allocated_proc} ({process_size} KB)</span>
+                    </div>
+                    <div class="fill-bar-bg" title="{used_pct}% filled">
+                        <div class="fill-bar-progress" style="width: {used_pct}%; background-color: {progress_color};"></div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">{unused_title}:</span>
+                        <span class="detail-value">{frag_display}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Free Leftover:</span>
+                        <span class="detail-value">{unused_space} KB</span>
+                    </div>
+                </div>
+            </div>
+            """
             with cols[col_idx]:
                 st.markdown(card_html, unsafe_allow_html=True)
 
@@ -565,17 +715,18 @@ def display_results(name, blocks, processes, allocation, occupied, internal_frag
     c4.metric("External Frag.", f"{external_frag} KB")
     c5.metric("System Utilization", f"{utilization:.2f}%")
 
+    # Step-by-Step Decision Trace Log as a Collapsible Dropdown
     if logs:
-        st.markdown('<div class="section-title">Step-by-Step Allocation Trace</div>', unsafe_allow_html=True)
-        for item in logs:
-            steps_html = "".join([f'<div class="trace-step">• {s}</div>' for s in item["steps"]])
-            trace_box = (
-                f'<div class="trace-card">'
-                f'<div class="trace-title">{item["process"]} ({item["size"]} KB) Allocation Trace:</div>'
-                f'{steps_html}'
-                f'</div>'
-            )
-            st.markdown(trace_box, unsafe_allow_html=True)
+        with st.expander(f"🔍 Step-by-Step Allocation Decision Trace ({name})", expanded=False):
+            for item in logs:
+                steps_html = "".join([f'<div class="trace-step">• {s}</div>' for s in item["steps"]])
+                trace_box = (
+                    f'<div class="trace-card">'
+                    f'<div class="trace-title">{item["process"]} ({item["size"]} KB) Allocation Trace:</div>'
+                    f'{steps_html}'
+                    f'</div>'
+                )
+                st.markdown(trace_box, unsafe_allow_html=True)
 
     display_memory(blocks, processes, allocation, occupied, internal_frag)
 
@@ -705,3 +856,16 @@ if active_action:
                 res["logs"],
             )
             st.divider()
+
+# ============================================================
+# WATERMARK FOOTER
+# ============================================================
+
+st.markdown(
+    """
+    <div class="footer-watermark">
+        <a href="https://www.linkedin.com/in/ritammahakur" target="_blank">Algor8m</a>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
